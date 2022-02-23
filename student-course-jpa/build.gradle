@@ -1,0 +1,5 @@
+description = 'student-course-jpa'
+
+dependencies {
+    api(project(':jpa-utils'))
+}
