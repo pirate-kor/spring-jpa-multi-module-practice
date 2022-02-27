@@ -1,7 +1,7 @@
 package com.pirate.practice.repository
 
 import com.pirate.practice.entity.Member
-import org.assertj.core.api.Assertions
+import com.pirate.practice.entity.Team
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -11,7 +11,8 @@ import org.springframework.transaction.annotation.Transactional
 @SpringBootTest
 @Transactional
 class MemberRepositoryTest @Autowired constructor(
-    private val memberRepository: MemberRepository
+    private val memberRepository: MemberRepository,
+    private val teamRepository: TeamRepository
 ) {
     @Test
     fun testMember() {
@@ -109,5 +110,59 @@ class MemberRepositoryTest @Autowired constructor(
         assertThat(findMember).isEqualTo(member1)
     }
 
+    @Test
+    fun findUsernames() {
+        val member1 = Member()
+        member1.username = "AAA"
+        member1.age = 10
+
+        val member2 = Member()
+        member2.username = "BBB"
+        member2.age = 20
+
+        memberRepository.save(member1)
+        memberRepository.save(member2)
+
+        val result = memberRepository.findUsernames()
+        assertThat(result[0]).isEqualTo(member1.username)
+        assertThat(result[1]).isEqualTo(member2.username)
+    }
+
+    @Test
+    fun findMemberDto() {
+        val team = Team()
+        team.name = "teamA"
+
+        teamRepository.save(team)
+
+        val member1 = Member()
+        member1.username = "AAA"
+        member1.age = 10
+        member1.team = team
+
+        memberRepository.save(member1)
+
+        val result = memberRepository.findMemberDto()
+        assertThat(result[0].username).isEqualTo(member1.username)
+        assertThat(result[0].teamName).isEqualTo(member1.team?.name)
+    }
+
+    @Test
+    fun findByNames() {
+        val member1 = Member()
+        member1.username = "AAA"
+        member1.age = 10
+
+        val member2 = Member()
+        member2.username = "BBB"
+        member2.age = 20
+
+        memberRepository.save(member1)
+        memberRepository.save(member2)
+
+        val result = memberRepository.findByNames(listOf("AAA", "BBB"))
+        assertThat(result[0]).isEqualTo(member1.username)
+        assertThat(result[1]).isEqualTo(member2.username)
+    }
 
 }

@@ -16,7 +16,7 @@ class Member {
     var username: String = ""
     var age: Int = 0
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @JoinColumn(name = "team_id")
     var team: Team? = null
 

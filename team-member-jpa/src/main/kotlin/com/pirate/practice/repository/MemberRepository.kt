@@ -1,5 +1,6 @@
 package com.pirate.practice.repository
 
+import com.pirate.practice.dto.MemberDto
 import com.pirate.practice.entity.Member
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
@@ -16,5 +17,14 @@ interface MemberRepository: JpaRepository<Member, Long> {
 
     @Query("select m from Member m where m.username = :username and m.age = :age")
     fun findUser(@Param("username") username: String, @Param("age") age: Int): List<Member>
+
+    @Query("select m.username from Member m")
+    fun findUsernames(): List<String>
+
+    @Query("select new com.pirate.practice.dto.MemberDto(m.id, m.username, t.name) from Member m join m.team t")
+    fun findMemberDto(): List<MemberDto>
+
+    @Query("select m from Member m where m.username in :names")
+    fun findByNames(@Param("names") names: List<String>): List<Member>
 
 }
