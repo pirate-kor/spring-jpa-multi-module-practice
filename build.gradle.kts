@@ -12,7 +12,9 @@ plugins {
 
     kotlin("jvm") version "1.6.10" apply false
     kotlin("plugin.spring") version "1.6.10" apply false
+    kotlin("plugin.allopen") version "1.6.10" apply false
     kotlin("plugin.jpa") version "1.6.10" apply false
+    kotlin("plugin.noarg") version "1.6.10" apply false
 }
 
 allprojects {
@@ -34,6 +36,7 @@ allprojects {
 }
 
 subprojects {
+
     repositories {
         mavenCentral()
     }
@@ -41,5 +44,6 @@ subprojects {
     apply {
         plugin("io.spring.dependency-management")
     }
+
 }
 

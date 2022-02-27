@@ -10,9 +10,10 @@ dependencies {
 
     implementation(kotlin("reflect"))
     implementation(kotlin("stdlib-jdk8"))
-    implementation("org.springframework.boot:spring-boot-starter")
-    implementation("org.springframework.boot:spring-boot-starter-web")
+
+    runtimeOnly("com.h2database:h2")
+
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-//
-//    testImplementation("org.springframework.boot:spring-boot-starter-test")
 }

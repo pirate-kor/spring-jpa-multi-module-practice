@@ -1,4 +1,4 @@
 rootProject.name = 'spring-multi-module'
 include('jpa-utils')
-include('student-course-jpa')
+include('team-member-jpa')
 
