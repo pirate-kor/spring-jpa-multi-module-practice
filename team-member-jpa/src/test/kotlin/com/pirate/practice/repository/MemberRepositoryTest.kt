@@ -1,11 +1,14 @@
 package com.pirate.practice.repository
 
+import com.pirate.practice.dto.MemberDto
 import com.pirate.practice.entity.Member
 import com.pirate.practice.entity.Team
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.transaction.annotation.Transactional
 
 @SpringBootTest
@@ -82,13 +85,8 @@ class MemberRepositoryTest @Autowired constructor(
 
     @Test
     fun testQuery() {
-        val member1 = Member()
-        member1.username = "AAA"
-        member1.age = 10
-
-        val member2 = Member()
-        member2.username = "BBB"
-        member2.age = 20
+        val member1 = Member("AAA", 10)
+        val member2 = Member("BBB", 20)
 
         memberRepository.save(member1)
         memberRepository.save(member2)
@@ -100,13 +98,8 @@ class MemberRepositoryTest @Autowired constructor(
 
     @Test
     fun findUsernames() {
-        val member1 = Member()
-        member1.username = "AAA"
-        member1.age = 10
-
-        val member2 = Member()
-        member2.username = "BBB"
-        member2.age = 20
+        val member1 = Member("AAA", 10)
+        val member2 = Member("BBB", 20)
 
         memberRepository.save(member1)
         memberRepository.save(member2)
@@ -118,16 +111,10 @@ class MemberRepositoryTest @Autowired constructor(
 
     @Test
     fun findMemberDto() {
-        val team = Team()
-        team.name = "teamA"
-
+        val team = Team("teamA")
         teamRepository.save(team)
 
-        val member1 = Member()
-        member1.username = "AAA"
-        member1.age = 10
-        member1.team = team
-
+        val member1 = Member("AAA", 10, team)
         memberRepository.save(member1)
 
         val result = memberRepository.findMemberDto()
@@ -137,13 +124,8 @@ class MemberRepositoryTest @Autowired constructor(
 
     @Test
     fun findByNames() {
-        val member1 = Member()
-        member1.username = "AAA"
-        member1.age = 10
-
-        val member2 = Member()
-        member2.username = "BBB"
-        member2.age = 20
+        val member1 = Member("AAA", 10)
+        val member2 = Member("BBB", 20)
 
         memberRepository.save(member1)
         memberRepository.save(member2)
@@ -153,4 +135,35 @@ class MemberRepositoryTest @Autowired constructor(
         assertThat(result[1]).isEqualTo(member2)
     }
 
+    @Test
+    fun paging() {
+        memberRepository.save(Member("member1", 10))
+        memberRepository.save(Member("member2", 10))
+        memberRepository.save(Member("member3", 10))
+        memberRepository.save(Member("member4", 10))
+        memberRepository.save(Member("member5", 10))
+        memberRepository.save(Member("member6", 10))
+
+        val age = 10
+        val pageRequest = PageRequest.of(0, 3, Sort.Direction.DESC, "username")
+
+        val pages = memberRepository.findByAge(age, pageRequest)
+        val toMap = pages.map { member -> MemberDto(member.id ?: 0, member.username, "") }
+        val contents = pages.content
+
+        assertThat(contents.size).isEqualTo(3)
+        assertThat(pages.totalElements).isEqualTo(6)
+        assertThat(pages.number).isEqualTo(0)
+        assertThat(pages.totalPages).isEqualTo(2)
+        assertThat(pages.isFirst).isTrue
+        assertThat(pages.hasNext()).isTrue
+
+        val slices = memberRepository.findSliceByAge(age, pageRequest)
+        val sliceContents = slices.content
+
+        assertThat(sliceContents.size).isEqualTo(3)
+        assertThat(slices.number).isEqualTo(0)
+        assertThat(slices.isFirst).isTrue
+        assertThat(slices.hasNext()).isTrue
+    }
 }

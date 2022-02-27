@@ -2,12 +2,14 @@ package com.pirate.practice.repository
 
 import com.pirate.practice.dto.MemberDto
 import com.pirate.practice.entity.Member
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Slice
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
-import javax.sound.midi.MetaMessage
 
-interface MemberRepository: JpaRepository<Member, Long> {
+interface MemberRepository : JpaRepository<Member, Long> {
 
     fun findByUsernameAndAgeGreaterThan(username: String, age: Int): List<Member>
 
@@ -27,5 +29,11 @@ interface MemberRepository: JpaRepository<Member, Long> {
     @Query("select m from Member m where m.username in :names")
     fun findByNames(@Param("names") names: List<String>): List<Member>
 
+    @Query(
+        value = "select m from Member m left join m.team t",
+        countQuery = "select count(m) from Member m"
+    )
+    fun findByAge(age: Int, pageable: Pageable): Page<Member>
+    fun findSliceByAge(age: Int, pageable: Pageable): Slice<Member>
 
 }
