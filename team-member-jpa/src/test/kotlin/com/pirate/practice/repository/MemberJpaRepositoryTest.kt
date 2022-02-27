@@ -53,4 +53,23 @@ internal class MemberJpaRepositoryTest @Autowired constructor(
         val deletedCount = memberJpaRepository.count()
         assertThat(deletedCount).isEqualTo(0)
     }
+
+    @Test
+    fun findByUsernameAndAgeGreaterThan() {
+        val memberA = Member()
+        memberA.username = "AAA"
+        memberA.age = 10
+        val memberB = Member()
+        memberA.username = "AAA"
+        memberA.age = 20
+
+        memberJpaRepository.save(memberA)
+        memberJpaRepository.save(memberB)
+
+        val result = memberJpaRepository.findByUsernameAndAgeGreaterThan("AAA", 15)
+
+        assertThat(result.size).isEqualTo(1)
+        assertThat(result[0].username).isEqualTo("AAA")
+        assertThat(result[0].age).isEqualTo(20)
+    }
 }
