@@ -1,6 +1,7 @@
 package com.pirate.practice.repository
 
 import com.pirate.practice.entity.Member
+import com.pirate.practice.entity.Team
 import org.assertj.core.api.Assertions.assertThat
 import org.hibernate.type.BigIntegerType
 import org.junit.jupiter.api.Test
@@ -15,8 +16,7 @@ internal class MemberJpaRepositoryTest @Autowired constructor(
 ) {
     @Test
     fun testMember() {
-        val member = Member()
-        member.username = "memberA"
+        val member = Member("memberA")
 
         val savedMember = memberJpaRepository.save(member)
         val findMember = memberJpaRepository.find(savedMember.id ?: 0)
@@ -28,10 +28,8 @@ internal class MemberJpaRepositoryTest @Autowired constructor(
 
     @Test
     fun basicCRUD() {
-        val member1 = Member()
-        member1.username = "member1"
-        val member2 = Member()
-        member1.username = "member2"
+        val member1 = Member("member1")
+        val member2 = Member("member2")
 
         memberJpaRepository.save(member1)
         memberJpaRepository.save(member2)
@@ -56,12 +54,8 @@ internal class MemberJpaRepositoryTest @Autowired constructor(
 
     @Test
     fun findByUsernameAndAgeGreaterThan() {
-        val memberA = Member()
-        memberA.username = "AAA"
-        memberA.age = 10
-        val memberB = Member()
-        memberA.username = "AAA"
-        memberA.age = 20
+        val memberA = Member("AAA", 20)
+        val memberB = Member("BBB", 20)
 
         memberJpaRepository.save(memberA)
         memberJpaRepository.save(memberB)
@@ -75,13 +69,8 @@ internal class MemberJpaRepositoryTest @Autowired constructor(
 
     @Test
     fun testNamedQuery() {
-        val member1 = Member()
-        member1.username = "AAA"
-        member1.age = 10
-
-        val member2 = Member()
-        member2.username = "BBB"
-        member2.age = 20
+        val member1 = Member("AAA", 10)
+        val member2 = Member("BBB", 20)
 
         memberJpaRepository.save(member1)
         memberJpaRepository.save(member2)

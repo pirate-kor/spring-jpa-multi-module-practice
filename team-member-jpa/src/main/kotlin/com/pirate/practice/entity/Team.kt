@@ -6,12 +6,14 @@ import javax.persistence.Id
 import javax.persistence.OneToMany
 
 @Entity
-class Team {
-
+class Team(
     @Id
     @GeneratedValue
-    var id: Long? = 0
-    var name: String? = ""
+    var id: Long? = null,
+    var name: String = ""
+) {
+
+    constructor(name: String): this(null, name)
 
     @OneToMany(mappedBy = "team")
     var members: MutableList<Member> = mutableListOf()

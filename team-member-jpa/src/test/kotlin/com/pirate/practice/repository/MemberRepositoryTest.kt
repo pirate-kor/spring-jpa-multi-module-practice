@@ -16,8 +16,7 @@ class MemberRepositoryTest @Autowired constructor(
 ) {
     @Test
     fun testMember() {
-        val member = Member()
-        member.username = "memberA"
+        val member = Member("memberA")
 
         val savedMember = memberRepository.save(member)
         val findMember = memberRepository.findById(savedMember.id ?: 0).get()
@@ -29,10 +28,8 @@ class MemberRepositoryTest @Autowired constructor(
 
     @Test
     fun basicCRUD() {
-        val member1 = Member()
-        member1.username = "member1"
-        val member2 = Member()
-        member1.username = "member2"
+        val member1 = Member("member1")
+        val member2 = Member("member2")
 
         memberRepository.save(member1)
         memberRepository.save(member2)
@@ -57,12 +54,8 @@ class MemberRepositoryTest @Autowired constructor(
 
     @Test
     fun findByUsernameAndAgeGreaterThen() {
-        val memberA = Member()
-        memberA.username = "AAA"
-        memberA.age = 10
-        val memberB = Member()
-        memberA.username = "AAA"
-        memberA.age = 20
+        val memberA = Member("AAA", 10)
+        val memberB = Member("AAA", 20)
 
         memberRepository.save(memberA)
         memberRepository.save(memberB)
@@ -76,13 +69,8 @@ class MemberRepositoryTest @Autowired constructor(
 
     @Test
     fun testNamedQuery() {
-        val member1 = Member()
-        member1.username = "AAA"
-        member1.age = 10
-
-        val member2 = Member()
-        member2.username = "BBB"
-        member2.age = 20
+        val member1 = Member("AAA", 10)
+        val member2 = Member("BBB", 20)
 
         memberRepository.save(member1)
         memberRepository.save(member2)
@@ -161,8 +149,8 @@ class MemberRepositoryTest @Autowired constructor(
         memberRepository.save(member2)
 
         val result = memberRepository.findByNames(listOf("AAA", "BBB"))
-        assertThat(result[0]).isEqualTo(member1.username)
-        assertThat(result[1]).isEqualTo(member2.username)
+        assertThat(result[0]).isEqualTo(member1)
+        assertThat(result[1]).isEqualTo(member2)
     }
 
 }
