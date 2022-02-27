@@ -72,4 +72,23 @@ internal class MemberJpaRepositoryTest @Autowired constructor(
         assertThat(result[0].username).isEqualTo("AAA")
         assertThat(result[0].age).isEqualTo(20)
     }
+
+    @Test
+    fun testNamedQuery() {
+        val member1 = Member()
+        member1.username = "AAA"
+        member1.age = 10
+
+        val member2 = Member()
+        member2.username = "BBB"
+        member2.age = 20
+
+        memberJpaRepository.save(member1)
+        memberJpaRepository.save(member2)
+
+        val result = memberJpaRepository.findByUsername("AAA")
+        val findMember = result[0]
+        assertThat(findMember).isEqualTo(member1)
+    }
+
 }

@@ -2,6 +2,7 @@ package com.pirate.practice.repository
 
 import com.pirate.practice.entity.Member
 import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -20,9 +21,9 @@ class MemberRepositoryTest @Autowired constructor(
         val savedMember = memberRepository.save(member)
         val findMember = memberRepository.findById(savedMember.id ?: 0).get()
 
-        Assertions.assertThat(findMember.id).isEqualTo(savedMember.id)
-        Assertions.assertThat(findMember.username).isEqualTo(savedMember.username)
-        Assertions.assertThat(findMember).isEqualTo(savedMember)
+        assertThat(findMember.id).isEqualTo(savedMember.id)
+        assertThat(findMember.username).isEqualTo(savedMember.username)
+        assertThat(findMember).isEqualTo(savedMember)
     }
 
     @Test
@@ -37,20 +38,20 @@ class MemberRepositoryTest @Autowired constructor(
 
         val findMember1 = memberRepository.findById(member1.id ?: 0).get()
         val findMember2 = memberRepository.findById(member2.id ?: 0).get()
-        Assertions.assertThat(findMember1).isEqualTo(member1)
-        Assertions.assertThat(findMember2).isEqualTo(member2)
+        assertThat(findMember1).isEqualTo(member1)
+        assertThat(findMember2).isEqualTo(member2)
 
         val all = memberRepository.findAll()
-        Assertions.assertThat(all.size).isEqualTo(2)
+        assertThat(all.size).isEqualTo(2)
 
         val count = memberRepository.count()
-        Assertions.assertThat(count).isEqualTo(2)
+        assertThat(count).isEqualTo(2)
 
         memberRepository.delete(member1)
         memberRepository.delete(member2)
 
         val deletedCount = memberRepository.count()
-        Assertions.assertThat(deletedCount).isEqualTo(0)
+        assertThat(deletedCount).isEqualTo(0)
     }
 
     @Test
@@ -67,9 +68,46 @@ class MemberRepositoryTest @Autowired constructor(
 
         val result = memberRepository.findByUsernameAndAgeGreaterThan("AAA", 15)
 
-        Assertions.assertThat(result.size).isEqualTo(1)
-        Assertions.assertThat(result[0].username).isEqualTo("AAA")
-        Assertions.assertThat(result[0].age).isEqualTo(20)
+        assertThat(result.size).isEqualTo(1)
+        assertThat(result[0].username).isEqualTo("AAA")
+        assertThat(result[0].age).isEqualTo(20)
     }
+
+    @Test
+    fun testNamedQuery() {
+        val member1 = Member()
+        member1.username = "AAA"
+        member1.age = 10
+
+        val member2 = Member()
+        member2.username = "BBB"
+        member2.age = 20
+
+        memberRepository.save(member1)
+        memberRepository.save(member2)
+
+        val result = memberRepository.findByUsername("AAA")
+        val findMember = result[0]
+        assertThat(findMember).isEqualTo(member1)
+    }
+
+    @Test
+    fun testQuery() {
+        val member1 = Member()
+        member1.username = "AAA"
+        member1.age = 10
+
+        val member2 = Member()
+        member2.username = "BBB"
+        member2.age = 20
+
+        memberRepository.save(member1)
+        memberRepository.save(member2)
+
+        val result = memberRepository.findUser("AAA", 10)
+        val findMember = result[0]
+        assertThat(findMember).isEqualTo(member1)
+    }
+
 
 }
