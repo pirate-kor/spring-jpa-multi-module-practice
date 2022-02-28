@@ -5,6 +5,7 @@ import com.pirate.practice.entity.Member
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
+import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
@@ -41,4 +42,18 @@ interface MemberRepository : JpaRepository<Member, Long> {
     @Query("update Member m set m.age = m.age + 1 where m.age >= :age")
     fun bulkAgePlus(@Param("age") age: Int): Int
 
+    @Query("select m from Member m left join fetch m.team")
+    fun findMemberFetchJoin(): List<Member>
+
+    // EntityGraph
+    @EntityGraph(attributePaths = ["team"])
+    override fun findAll(): List<Member>
+
+    // 이렇게 해도 위에 entityGraph 설정한 findAll과 동일한 결과가 나옴
+    @EntityGraph(attributePaths = ["team"])
+    @Query("select m from Member m")
+    fun findMemberEntityGraph(): List<Member>
+
+    @EntityGraph("Member.all")
+    fun findEntityGraphByUsername(@Param("username") username: String): List<Member>
 }

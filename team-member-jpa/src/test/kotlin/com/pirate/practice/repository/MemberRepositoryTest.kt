@@ -188,4 +188,45 @@ class MemberRepositoryTest @Autowired constructor(
 
         assertThat(resultCount).isEqualTo(3)
     }
+
+    @Test
+    fun findMemberLazy() {
+        val teamA = Team("teamA")
+        val teamB = Team("teamB")
+        teamRepository.save(teamA)
+        teamRepository.save(teamB)
+
+        val member1 = Member("member1", 10, teamA)
+        val member2 = Member("member2", 10, teamB)
+        val member3 = Member("member1", 10, teamB)
+        memberRepository.save(member1)
+        memberRepository.save(member2)
+        memberRepository.save(member3)
+
+        entityManager.flush()
+        entityManager.clear()
+
+        // N + 1 problem
+        val members = memberRepository.findAll()
+        for (member in members) {
+            println("member = ${member.username}")
+            println("member.teamClass = ${member.team?.javaClass}")
+            println("member.team = ${member.team?.name}")
+        }
+
+        // fetch join
+        val fetchJoinMembers = memberRepository.findMemberFetchJoin()
+        for (member in fetchJoinMembers) {
+            println("member = ${member.username}")
+            println("member.teamClass = ${member.team?.javaClass}")
+            println("member.team = ${member.team?.name}")
+        }
+        // named entity graph
+        val namedEntityGraphMembers = memberRepository.findEntityGraphByUsername("member1")
+        for (member in namedEntityGraphMembers) {
+            println("member = ${member.username}")
+            println("member.teamClass = ${member.team?.javaClass}")
+            println("member.team = ${member.team?.name}")
+        }
+    }
 }
