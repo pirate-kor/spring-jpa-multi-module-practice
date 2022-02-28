@@ -10,12 +10,14 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.transaction.annotation.Transactional
+import javax.persistence.EntityManager
 
 @SpringBootTest
 @Transactional
 class MemberRepositoryTest @Autowired constructor(
     private val memberRepository: MemberRepository,
-    private val teamRepository: TeamRepository
+    private val teamRepository: TeamRepository,
+    private val entityManager: EntityManager
 ) {
     @Test
     fun testMember() {
@@ -165,5 +167,25 @@ class MemberRepositoryTest @Autowired constructor(
         assertThat(slices.number).isEqualTo(0)
         assertThat(slices.isFirst).isTrue
         assertThat(slices.hasNext()).isTrue
+    }
+
+    @Test
+    fun bulkUpdate() {
+        memberRepository.save(Member("member1", 10))
+        memberRepository.save(Member("member2", 19))
+        memberRepository.save(Member("member3", 20))
+        memberRepository.save(Member("member4", 21))
+        memberRepository.save(Member("member5", 40))
+
+        val resultCount = memberRepository.bulkAgePlus(20)
+        // 벌크연산 이후에 영속성 컨텍스트의 내용을 DB에 반영
+        // 아니면, clearAutomatically를 true로 설정
+        entityManager.clear()
+
+        val result = memberRepository.findByUsername("member5")
+        val member5 = result[0]
+        // 영속성 컨텍스트를 제거하지 않은 상태로 값을 가져오면, 40 살로 가져옴 (캐시에서 값 읽어옴)
+
+        assertThat(resultCount).isEqualTo(3)
     }
 }

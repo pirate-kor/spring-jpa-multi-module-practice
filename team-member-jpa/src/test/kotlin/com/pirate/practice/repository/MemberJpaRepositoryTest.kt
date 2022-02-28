@@ -99,4 +99,17 @@ internal class MemberJpaRepositoryTest @Autowired constructor(
         assertThat(members.size).isEqualTo(3)
         assertThat(totalCount).isEqualTo(6)
     }
+
+    @Test
+    fun bulkUpdate() {
+        memberJpaRepository.save(Member("member1", 10))
+        memberJpaRepository.save(Member("member2", 19))
+        memberJpaRepository.save(Member("member3", 20))
+        memberJpaRepository.save(Member("member4", 21))
+        memberJpaRepository.save(Member("member5", 40))
+
+        val resultCount = memberJpaRepository.bulkAgePlus(20)
+
+        assertThat(resultCount).isEqualTo(3)
+    }
 }
