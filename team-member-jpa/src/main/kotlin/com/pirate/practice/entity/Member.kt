@@ -1,5 +1,6 @@
 package com.pirate.practice.entity
 
+import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
@@ -17,8 +18,8 @@ class Member(
     var age: Int = 0,
     @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @JoinColumn(name = "team_id")
-    var team: Team? = null
-) {
+    var team: Team? = null,
+): JpaBaseEntity() {
     constructor(username: String): this(null, username, 10)
     constructor(username: String, age: Int): this(null, username, age)
     constructor(username: String, age: Int, team: Team?): this(null, username, age, team)

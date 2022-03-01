@@ -11,7 +11,7 @@ class Team(
     @GeneratedValue
     var id: Long? = null,
     var name: String = ""
-) {
+): JpaBaseEntity() {
 
     constructor(name: String): this(null, name)
 

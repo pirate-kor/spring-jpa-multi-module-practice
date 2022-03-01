@@ -1,5 +1,6 @@
 package com.pirate.practice.entity
 
+import com.pirate.practice.repository.MemberRepository
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -13,7 +14,8 @@ import javax.persistence.PersistenceContext
 @Rollback(false)
 internal class MemberTest @Autowired constructor(
     @PersistenceContext
-    private val em: EntityManager
+    private val em: EntityManager,
+    private val memberRepository: MemberRepository
 ) {
 
     @Test
@@ -43,6 +45,22 @@ internal class MemberTest @Autowired constructor(
             println("member = $mem")
             println("member.team = ${mem.team}")
         }
+    }
+
+    @Test
+    fun JpaEventBaseEntity() {
+        val member = Member("member1")
+        memberRepository.save(member)
+
+        Thread.sleep(100)
+        member.username = "member2"
+
+        em.flush()
+        em.clear()
+
+        val findMember = memberRepository.findById(member.id!!).get()
+        println("member.createdDate = ${findMember.createdDate}")
+        println("member.updatedDate = ${findMember.updatedDate}")
     }
 
 }
