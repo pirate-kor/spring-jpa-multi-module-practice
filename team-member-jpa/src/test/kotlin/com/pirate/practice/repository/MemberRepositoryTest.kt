@@ -255,4 +255,9 @@ class MemberRepositoryTest @Autowired constructor(
 
         entityManager.flush()
     }
+
+    @Test
+    fun callCustom() {
+        val result = memberRepository.findCustomMember()
+    }
 }

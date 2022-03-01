@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param
 import javax.persistence.LockModeType
 import javax.persistence.QueryHint
 
-interface MemberRepository : JpaRepository<Member, Long> {
+interface MemberRepository : JpaRepository<Member, Long>, MemberCustomRepository {
 
     fun findByUsernameAndAgeGreaterThan(username: String, age: Int): List<Member>
 
@@ -61,4 +61,5 @@ interface MemberRepository : JpaRepository<Member, Long> {
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     fun findLockByUsername(username: String): List<Member>
+
 }
