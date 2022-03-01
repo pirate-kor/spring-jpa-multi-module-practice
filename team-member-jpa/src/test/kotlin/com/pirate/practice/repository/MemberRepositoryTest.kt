@@ -229,4 +229,30 @@ class MemberRepositoryTest @Autowired constructor(
             println("member.team = ${member.team?.name}")
         }
     }
+
+    @Test
+    fun queryHint() {
+        val member1 = Member("member1", 10)
+        memberRepository.save(member1)
+        entityManager.flush()
+        entityManager.clear()
+
+        val findMember = memberRepository.findReadOnlyByUsername("member1")
+        findMember.username = "member2"
+
+        entityManager.flush()
+    }
+
+    @Test
+    fun lock() {
+        val member1 = Member("member1", 10)
+        memberRepository.save(member1)
+        entityManager.flush()
+        entityManager.clear()
+
+        // for update
+        val findMembers = memberRepository.findLockByUsername("member1")
+
+        entityManager.flush()
+    }
 }

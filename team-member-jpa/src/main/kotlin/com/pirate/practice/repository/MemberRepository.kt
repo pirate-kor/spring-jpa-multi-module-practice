@@ -5,11 +5,10 @@ import com.pirate.practice.entity.Member
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
-import org.springframework.data.jpa.repository.EntityGraph
-import org.springframework.data.jpa.repository.JpaRepository
-import org.springframework.data.jpa.repository.Modifying
-import org.springframework.data.jpa.repository.Query
+import org.springframework.data.jpa.repository.*
 import org.springframework.data.repository.query.Param
+import javax.persistence.LockModeType
+import javax.persistence.QueryHint
 
 interface MemberRepository : JpaRepository<Member, Long> {
 
@@ -56,4 +55,10 @@ interface MemberRepository : JpaRepository<Member, Long> {
 
     @EntityGraph("Member.all")
     fun findEntityGraphByUsername(@Param("username") username: String): List<Member>
+
+    @QueryHints(value = [QueryHint(name = "org.hibernate.readOnly", value = "true")])
+    fun findReadOnlyByUsername(username: String): Member
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    fun findLockByUsername(username: String): List<Member>
 }
