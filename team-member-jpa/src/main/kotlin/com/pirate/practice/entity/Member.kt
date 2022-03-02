@@ -19,7 +19,7 @@ class Member(
     @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @JoinColumn(name = "team_id")
     var team: Team? = null,
-): JpaBaseEntity() {
+): BaseEntity() {
     constructor(username: String): this(null, username, 10)
     constructor(username: String, age: Int): this(null, username, age)
     constructor(username: String, age: Int, team: Team?): this(null, username, age, team)

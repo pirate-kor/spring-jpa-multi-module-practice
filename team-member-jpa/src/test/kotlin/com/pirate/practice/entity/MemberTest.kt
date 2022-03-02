@@ -60,7 +60,9 @@ internal class MemberTest @Autowired constructor(
 
         val findMember = memberRepository.findById(member.id!!).get()
         println("member.createdDate = ${findMember.createdDate}")
-        println("member.updatedDate = ${findMember.updatedDate}")
+        println("member.updatedDate = ${findMember.lastModifiedDate}")
+        println("member.createdBy = ${findMember.createdBy}")
+        println("member.updatedBy = ${findMember.lastModifiedBy}")
     }
 
 }
