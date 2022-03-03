@@ -62,4 +62,7 @@ interface MemberRepository : JpaRepository<Member, Long>, MemberCustomRepository
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     fun findLockByUsername(username: String): List<Member>
 
+    fun findProjectionsByUsername(@Param("username") username: String): List<UsernameOnly>
+    fun findProjectionsClassByUsername(@Param("username") username: String): List<UsernameOnlyDto>
+    fun <T> findProjectionsNestedClassByUsername(@Param("username") username: String, clazz: Class<T>): List<T>
 }

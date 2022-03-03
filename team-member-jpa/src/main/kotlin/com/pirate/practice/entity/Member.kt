@@ -1,6 +1,5 @@
 package com.pirate.practice.entity
 
-import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity

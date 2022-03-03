@@ -7,6 +7,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.data.domain.Example
+import org.springframework.data.domain.ExampleMatcher
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.transaction.annotation.Transactional
@@ -257,7 +259,52 @@ class MemberRepositoryTest @Autowired constructor(
     }
 
     @Test
-    fun callCustom() {
-        val result = memberRepository.findCustomMember()
+    fun queryByExample() {
+        val teamA = Team("teamA")
+        val member1 = Member("member1", 10, teamA)
+        val member2 = Member("member2", 10, teamA)
+
+        entityManager.persist(member1)
+        entityManager.persist(member2)
+
+        entityManager.flush()
+        entityManager.clear()
+
+        val team = Team("teamA")
+        val member = Member("member1", 0, team)
+        val matcher = ExampleMatcher.matching().withIgnorePaths("age")
+
+        val example = Example.of(member, matcher)
+        val result = memberRepository.findAll(example)
+
+        assertThat(result[0].username).isEqualTo("member1")
+    }
+
+    @Test
+    fun projections() {
+        val teamA = Team("teamA")
+        val member1 = Member("member1", 10, teamA)
+        val member2 = Member("member2", 10, teamA)
+
+        entityManager.persist(member1)
+        entityManager.persist(member2)
+
+        entityManager.flush()
+        entityManager.clear()
+
+        val result = memberRepository.findProjectionsByUsername("member1")
+        val resultClass = memberRepository.findProjectionsClassByUsername("member1")
+        val resultNestedClass = memberRepository.findProjectionsNestedClassByUsername("member1", NestedClosedProjections::class.javaObjectType)
+
+        for (r in result) {
+            println("usernameOnly = ${r.getUsername()}")
+        }
+        for (r in resultClass) {
+            println("usernameOnly = ${r.username}")
+        }
+        for (r in resultNestedClass) {
+            println("username = ${r.getUsername()}")
+            println("teamName = ${r.getTeam()?.getName() ?: ""}")
+        }
     }
 }
