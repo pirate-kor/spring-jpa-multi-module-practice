@@ -65,4 +65,15 @@ interface MemberRepository : JpaRepository<Member, Long>, MemberCustomRepository
     fun findProjectionsByUsername(@Param("username") username: String): List<UsernameOnly>
     fun findProjectionsClassByUsername(@Param("username") username: String): List<UsernameOnlyDto>
     fun <T> findProjectionsNestedClassByUsername(@Param("username") username: String, clazz: Class<T>): List<T>
+
+    @Query(value = "select * from member where username = ?", nativeQuery = true)
+    fun findByNativeQuery(username: String): List<Member>
+
+    @Query(
+        value = "select m.member_id as id, m.username, t.name as teamName " +
+                "from member m left join team t",
+        countQuery = "select count(*) from member",
+        nativeQuery = true
+    )
+    fun findByNativeProjection(pageable: Pageable): Page<MemberProjection>
 }

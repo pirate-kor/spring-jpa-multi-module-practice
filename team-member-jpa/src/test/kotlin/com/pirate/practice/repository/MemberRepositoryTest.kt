@@ -307,4 +307,38 @@ class MemberRepositoryTest @Autowired constructor(
             println("teamName = ${r.getTeam()?.getName() ?: ""}")
         }
     }
+
+    @Test
+    fun nativeQuery() {
+        val teamA = Team("teamA")
+        val member1 = Member("member1", 10, teamA)
+        val member2 = Member("member2", 10, teamA)
+
+        entityManager.persist(member1)
+        entityManager.persist(member2)
+
+        entityManager.flush()
+        entityManager.clear()
+
+        val result = memberRepository.findByNativeQuery("member1")
+        assertThat(result.size).isGreaterThan(1)
+    }
+
+    @Test
+    fun nativeQueryProjection() {
+        val teamA = Team("teamA")
+        val member1 = Member("member1", 10, teamA)
+        val member2 = Member("member2", 10, teamA)
+
+        entityManager.persist(member1)
+        entityManager.persist(member2)
+
+        entityManager.flush()
+        entityManager.clear()
+
+        val result = memberRepository.findByNativeProjection(PageRequest.of(0, 10))
+        assertThat(result.size).isGreaterThan(1)
+        assertThat(result.totalElements).isGreaterThan(1L)
+    }
+
 }
